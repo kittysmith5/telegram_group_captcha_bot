@@ -3,6 +3,7 @@ package msg_handler
 import (
 	api "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"time"
+	"v5tgbot/util"
 )
 
 func banNewMember(chatID, userID int64) {
@@ -110,7 +111,7 @@ func newMembersIntoGrp(update *api.Update) {
 		banNewMember(cid, newMember.ID)
 		res, sentMsg := sendCapture(update, newMember)
 
-		verifyMap[len(verifyMap)] = VerifyType{
+		verifyMap[util.NewUUIDStr()] = VerifyType{
 			newUser: newMember,
 			res:     res,
 			gid:     cid,

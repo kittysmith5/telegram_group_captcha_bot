@@ -12,26 +12,28 @@ type VerifyType struct {
 	mid     int
 }
 
-var verifyMap = map[int]VerifyType{}
+var verifyMap = map[string]VerifyType{}
 
 func updateMsgHandler(update *api.Update) {
-	upMsg := update.Message
-	if upMsg.NewChatMembers != nil {
-		chatID := update.Message.Chat.ID
-		delMsg(chatID, update.Message.MessageID)
-		println("==============进入新成员处理")
-		botItselfIntoGrp(update)
-		newMembersIntoGrp(update)
-		time.Sleep(time.Second * 95)
-		for id, verifyUser := range verifyMap {
-			delMsg(chatID, verifyUser.mid)
-			kickMember(chatID, verifyUser.newUser.ID, -1)
-			delete(verifyMap, id)
+	if update.Message != nil {
+		upMsg := update.Message
+		if upMsg.NewChatMembers != nil {
+			chatID := update.Message.Chat.ID
+			delMsg(chatID, update.Message.MessageID)
+
+			botItselfIntoGrp(update)
+			newMembersIntoGrp(update)
+			time.Sleep(time.Second * 95)
+			for id, verifyUser := range verifyMap {
+				delMsg(chatID, verifyUser.mid)
+				kickMember(chatID, verifyUser.newUser.ID, -1)
+				delete(verifyMap, id)
+			}
 		}
-	}
-	//if upMsg.LeftChatMember != nil && upMsg.LeftChatMember.ID!=bot.Self.ID{
-	if upMsg.LeftChatMember != nil {
-		delMsg(update.Message.Chat.ID, update.Message.MessageID)
+		//if upMsg.LeftChatMember != nil && upMsg.LeftChatMember.ID!=bot.Self.ID{
+		if upMsg.LeftChatMember != nil {
+			delMsg(update.Message.Chat.ID, update.Message.MessageID)
+		}
 	}
 }
 
@@ -43,9 +45,7 @@ func callbackQueryHandler(update *api.Update) {
 		condition2 := verifyType.res == update.CallbackQuery.Data
 		condition3 := verifyType.mid == mid
 		condition4 := verifyType.gid == chatID
-		println(condition1, condition2, condition3, condition4)
-		println("===============chatID mID================")
-		println(chatID, mid)
+
 		if condition1 && condition2 && condition3 && condition4 {
 			delMsg(chatID, mid)
 			unRestrictMember(chatID, verifyType.newUser.ID)
@@ -64,7 +64,6 @@ func callbackQueryHandler(update *api.Update) {
 }
 
 func myChatMemberHandler(update *api.Update) {
-	println("======================")
 	newUser := update.MyChatMember.NewChatMember
 	newUserID := newUser.User.ID
 	if newUserID == bot.Self.ID {
@@ -78,12 +77,7 @@ func myChatMemberHandler(update *api.Update) {
 		if !canSendMsg(newUser) && !update.MyChatMember.From.IsBot {
 			//priChatID :=
 			userID := update.MyChatMember.From.ID
-			//userName := update.MyChatMember.From.UserName
 			atUser := "@" + getUserName(update.MyChatMember.From)
-			//if userName == "" {
-			//    userName = update.MyChatMember.From.FirstName + " " + update.MyChatMember.From.LastName
-			//    atUser = "hello! " + userName
-			//}
 			grpTitle := update.MyChatMember.Chat.Title
 			grpName := update.MyChatMember.Chat.UserName
 			grpLink := "[" + grpTitle + "](t.me/" + grpName + ")"
