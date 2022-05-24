@@ -89,7 +89,7 @@ func myChatMemberHandler(update *api.Update) {
 			grpLink := "[" + grpTitle + "](t.me/" + grpName + ")"
 
 			sentMDMsg := sendMarkDownMsg(userID, atUser+"\n请给我\t"+grpLink+"\t群\n发送消息权限（机器人权限设置）")
-			time.Sleep(time.Second * 30)
+			time.Sleep(time.Second * 300)
 			delMsg(userID, sentMDMsg.MessageID)
 		}
 	}
