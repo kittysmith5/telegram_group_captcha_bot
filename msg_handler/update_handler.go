@@ -15,23 +15,14 @@ type VerifyType struct {
 var verifyMap = map[string]VerifyType{}
 
 func updateMsgHandler(update *api.Update) {
-	if update.Message != nil {
+	if isGrp(update) && update.Message != nil {
 		upMsg := update.Message
+		println("\n=================msg ==================")
 		if upMsg.NewChatMembers != nil {
 			chatID := update.Message.Chat.ID
 			delMsg(chatID, update.Message.MessageID)
-
-			botItselfIntoGrp(update)
 			newMembersIntoGrp(update)
-			time.Sleep(time.Second * 95)
-			for id, verifyUser := range verifyMap {
-				delMsg(chatID, verifyUser.mid)
-				kickMember(chatID, verifyUser.newUser.ID, -1)
-				delete(verifyMap, id)
-			}
-		}
-		//if upMsg.LeftChatMember != nil && upMsg.LeftChatMember.ID!=bot.Self.ID{
-		if upMsg.LeftChatMember != nil {
+		} else if upMsg.LeftChatMember != nil {
 			delMsg(update.Message.Chat.ID, update.Message.MessageID)
 		}
 	}
@@ -39,26 +30,28 @@ func updateMsgHandler(update *api.Update) {
 
 func callbackQueryHandler(update *api.Update) {
 	chatID := update.CallbackQuery.Message.Chat.ID
-	mid := update.CallbackQuery.Message.MessageID
-	for id, verifyType := range verifyMap {
-		condition1 := verifyType.newUser.ID == update.CallbackQuery.From.ID
-		condition2 := verifyType.res == update.CallbackQuery.Data
-		condition3 := verifyType.mid == mid
-		condition4 := verifyType.gid == chatID
+	if isGrp(update) && isAdmin(chatID, bot.Self.ID) {
+		mid := update.CallbackQuery.Message.MessageID
+		for id, verifyType := range verifyMap {
+			condition1 := verifyType.newUser.ID == update.CallbackQuery.From.ID
+			condition2 := verifyType.res == update.CallbackQuery.Data
+			condition3 := verifyType.mid == mid
+			condition4 := verifyType.gid == chatID
 
-		if condition1 && condition2 && condition3 && condition4 {
-			delMsg(chatID, mid)
-			unRestrictMember(chatID, verifyType.newUser.ID)
-			delete(verifyMap, id)
-		} else if condition1 && condition3 {
-			txt := "@" + verifyType.newUser.UserName + "\n" + "对不起，回答错误，请在10个小时后重新加群！"
-			delMsg(chatID, mid)
-			sentMsg := sendTxtMsg(chatID, txt)
-			time.Sleep(time.Second * 8)
-			delMsg(chatID, sentMsg.MessageID)
-			kickMember(chatID, verifyType.newUser.ID, 36000)
-			delete(verifyMap, id)
-			time.Sleep(time.Second * 5)
+			if condition1 && condition2 && condition3 && condition4 {
+				delMsg(chatID, mid)
+				unRestrictMember(chatID, verifyType.newUser.ID)
+				delete(verifyMap, id)
+			} else if condition1 && condition3 {
+				txt := "@" + verifyType.newUser.UserName + "\n" + "对不起，回答错误，请在6个小时后重新加群！"
+				delMsg(chatID, mid)
+				sentMsg := sendTxtMsg(chatID, txt)
+				time.Sleep(time.Second * 8)
+				delMsg(chatID, sentMsg.MessageID)
+				kickMember(chatID, verifyType.newUser.ID, 3600*6)
+				delete(verifyMap, id)
+				time.Sleep(time.Second * 5)
+			}
 		}
 	}
 }

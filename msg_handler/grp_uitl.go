@@ -92,30 +92,29 @@ func unRestrictMember(chatID, userID int64) {
 	_, _ = bot.Send(restrictConfig)
 }
 
-func botItselfIntoGrp(update *api.Update) {
-	newChatMembers := update.Message.NewChatMembers
-	for _, newMember := range newChatMembers {
-		if newMember.IsBot && newMember.ID == bot.Self.ID {
-			cid := update.Message.Chat.ID
-			sendTxtMsg(cid, "请给我管理员权限，才能开启入群验证功能！")
-			return
-		}
-	}
-}
-
 func newMembersIntoGrp(update *api.Update) {
 	newChatMembers := update.Message.NewChatMembers
 	cid := update.Message.Chat.ID
+	fid := update.Message.From.ID
+	member := *new(api.User)
 	for _, newMember := range newChatMembers {
-		println(newMember.ID)
-		banNewMember(cid, newMember.ID)
-		res, sentMsg := sendCapture(update, newMember)
-
+		member = newMember
+		break
+	}
+	if member.IsBot && !isCreator(cid, fid) || !member.IsBot && !isAdmin(cid, fid) {
+		banNewMember(cid, member.ID)
+		res, sentMsg := sendCapture(update, member)
 		verifyMap[util.NewUUIDStr()] = VerifyType{
-			newUser: newMember,
+			newUser: member,
 			res:     res,
 			gid:     cid,
 			mid:     sentMsg.MessageID,
+		}
+		time.Sleep(time.Second * 95)
+		for id, verifyUser := range verifyMap {
+			delMsg(cid, verifyUser.mid)
+			kickMember(cid, verifyUser.newUser.ID, -1)
+			delete(verifyMap, id)
 		}
 	}
 }
@@ -123,11 +122,9 @@ func newMembersIntoGrp(update *api.Update) {
 func isGrp(update *api.Update) bool {
 	if update.MyChatMember != nil {
 		return isGrpType(update.MyChatMember.Chat.Type)
-	}
-	if update.Message != nil {
+	} else if update.Message != nil {
 		return isGrpType(update.Message.Chat.Type)
-	}
-	if update.CallbackQuery != nil {
+	} else if update.CallbackQuery != nil {
 		return isGrpType(update.CallbackQuery.Message.Chat.Type)
 	}
 	return false

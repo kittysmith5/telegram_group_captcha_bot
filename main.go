@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-	//token := flag.String("t", "", "token of your bot")
 	token := flag.String("t", "", "token of your bot")
 	flag.Parse()
 	fmt.Println(*token)
