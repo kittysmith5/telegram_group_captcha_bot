@@ -63,7 +63,6 @@ func myChatMemberHandler(update *api.Update) {
 		if !canManageGrp(newUser) {
 			cid := update.MyChatMember.Chat.ID
 			sentTxtMsg := sendTxtMsg(cid, "请给我删除消息权限，管理群权限，禁言删除群成员权限（管理员权限中设置）！才能进行入群验证")
-
 			time.Sleep(time.Second * 30)
 			delMsg(cid, sentTxtMsg.MessageID)
 		}

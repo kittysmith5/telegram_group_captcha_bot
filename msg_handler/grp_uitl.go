@@ -93,6 +93,9 @@ func unRestrictMember(chatID, userID int64) {
 }
 
 func newMembersIntoGrp(update *api.Update) {
+	if update.Message == nil {
+		return
+	}
 	newChatMembers := update.Message.NewChatMembers
 	cid := update.Message.Chat.ID
 	fid := update.Message.From.ID
