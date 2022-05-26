@@ -22,19 +22,14 @@ func botApi(botToken string) *api.BotAPI {
 
 func Boot(botToken string) {
 	bot = botApi(botToken)
-	//消息的偏移量？
+	//消息的偏移量？-1表示只保留最后一条update
 	u := api.NewUpdate(-1)
-	//获取更新的延迟
-	u.Timeout = 0
+	//Timeout in seconds for long polling
+	//u.Timeout = 0
 	updates := bot.GetUpdatesChan(u)
-
 	//get the last update
-	begin := true
+	//begin := true
 	for update := range updates {
-		if begin {
-			begin = false
-			continue
-		}
 		go updateHandler(&update)
 	}
 }

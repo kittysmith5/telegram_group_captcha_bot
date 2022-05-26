@@ -13,11 +13,11 @@ type VerifyType struct {
 }
 
 var verifyMap = map[string]VerifyType{}
+var counterMap = map[int64]int8{}
 
 func updateMsgHandler(update *api.Update) {
 	if isGrp(update) && update.Message != nil {
 		upMsg := update.Message
-		println("\n=================msg ==================")
 		if upMsg.NewChatMembers != nil {
 			chatID := update.Message.Chat.ID
 			delMsg(chatID, update.Message.MessageID)
@@ -33,24 +33,42 @@ func callbackQueryHandler(update *api.Update) {
 	if isGrp(update) && isAdmin(chatID, bot.Self.ID) {
 		mid := update.CallbackQuery.Message.MessageID
 		for id, verifyType := range verifyMap {
-			condition1 := verifyType.newUser.ID == update.CallbackQuery.From.ID
-			condition2 := verifyType.res == update.CallbackQuery.Data
-			condition3 := verifyType.mid == mid
-			condition4 := verifyType.gid == chatID
+			userIsRight := verifyType.newUser.ID == update.CallbackQuery.From.ID
+			resIsRight := verifyType.res == update.CallbackQuery.Data
+			msgIsRight := verifyType.mid == mid
+			cidISRight := verifyType.gid == chatID
 
-			if condition1 && condition2 && condition3 && condition4 {
+			if userIsRight && resIsRight && msgIsRight && cidISRight {
 				delMsg(chatID, mid)
 				unRestrictMember(chatID, verifyType.newUser.ID)
 				delete(verifyMap, id)
-			} else if condition1 && condition3 {
-				txt := "@" + verifyType.newUser.UserName + "\n" + "对不起，回答错误，请在6个小时后重新加群！"
-				delMsg(chatID, mid)
-				sentMsg := sendTxtMsg(chatID, txt)
-				time.Sleep(time.Second * 8)
-				delMsg(chatID, sentMsg.MessageID)
+				sendAnswerCallBack(update.CallbackQuery.ID, "    恭喜，你通过了验证!")
+			} else if userIsRight && msgIsRight && cidISRight {
+				//txt := "@" + verifyType.newUser.UserName + "\n" + "对不起，回答错误，请在6个小时后重新加群！"
+				//delMsg(chatID, mid)
+				//sentMsg := sendTxtMsg(chatID, txt)
+				//time.Sleep(time.Second * 8)
+				//delMsg(chatID, sentMsg.MessageID)
+				sendAnswerCallBack(update.CallbackQuery.ID, "对不起，回答错误，请在6个小时后重新加群！")
 				kickMember(chatID, verifyType.newUser.ID, 3600*6)
 				delete(verifyMap, id)
-				time.Sleep(time.Second * 5)
+				time.Sleep(time.Second * 2)
+
+			} else if !userIsRight && cidISRight && !isAdmin(chatID, update.CallbackQuery.From.ID) {
+				wrongUserID := update.CallbackQuery.From.ID
+				counterMap[wrongUserID] += 1
+				sendAnswerCallBack(update.CallbackQuery.ID, "不要乱点他人验证消息, 多次点击将会禁言!")
+				for userID, counter := range counterMap {
+					if counter == 3 {
+						banMember(chatID, userID, 900)
+						name := getUserName(*update.CallbackQuery.From)
+						txt := "@" + name + "\n" + "\n乱点他人验证消息三次，禁言15分钟！"
+						sentMsg := sendMarkDownMsg(chatID, txt)
+						counterMap[userID] = 0
+						time.Sleep(time.Second * 10)
+						delMsg(chatID, sentMsg.MessageID)
+					}
+				}
 			}
 		}
 	}

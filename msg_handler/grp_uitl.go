@@ -6,6 +6,33 @@ import (
 	"v5tgbot/util"
 )
 
+func banMember(chatID, userID, sec int64) {
+	memberConfig := api.ChatMemberConfig{
+		ChatID:             chatID,
+		SuperGroupUsername: "",
+		ChannelUsername:    "",
+		UserID:             userID,
+	}
+
+	blankPermissions := api.ChatPermissions{
+		CanSendMessages:       false,
+		CanSendMediaMessages:  false,
+		CanSendPolls:          false,
+		CanSendOtherMessages:  false,
+		CanAddWebPagePreviews: false,
+		CanChangeInfo:         false,
+		CanInviteUsers:        false,
+		CanPinMessages:        false,
+	}
+
+	restrictConfig := api.RestrictChatMemberConfig{
+		ChatMemberConfig: memberConfig,
+		UntilDate:        time.Now().Unix() + sec,
+		Permissions:      &blankPermissions,
+	}
+	_, _ = bot.Send(restrictConfig)
+}
+
 func banNewMember(chatID, userID int64) {
 	memberConfig := api.ChatMemberConfig{
 		ChatID:             chatID,

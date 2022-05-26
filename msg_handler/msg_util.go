@@ -74,6 +74,20 @@ func sendCapture(update *api.Update, newMember api.User) (res string, sentMsg ap
 	return
 }
 
+func sendAnswerCallBack(callbackQueryID, txt string) {
+	var callbackConfig = api.CallbackConfig{
+		CallbackQueryID: callbackQueryID,
+		Text:            txt,
+		ShowAlert:       true,
+		URL:             "",
+		CacheTime:       0,
+	}
+	_, _ = bot.Send(callbackConfig)
+	//if err != nil {
+	//	return
+	//}
+}
+
 func int2Sticker(num int) (str string) {
 	str = ""
 	stickerSuffix := "\ufe0f\u20e3"
