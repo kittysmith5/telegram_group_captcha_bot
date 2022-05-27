@@ -57,16 +57,16 @@ func sendCapture(update *api.Update, newMember api.User) (res string, sentMsg ap
 	rows[4] = api.NewInlineKeyboardButtonData(markE, markE)
 
 	rows[randomMark] = api.NewInlineKeyboardButtonData(res, res)
-
 	markup := api.NewInlineKeyboardMarkup(rows)
-	msg := api.NewMessage(chatID, "123")
 
-	msg.Text = "@" + getUserName(newMember) + "\n\n"
-	msg.Text += "请在120秒内完成验证，否则永久不能入群！\n\n"
-	msg.Text += "计算下面一道数学题\n\n" + txt + "\n\n\n"
-	//newUser = newMember
-
+	msg := api.NewMessage(chatID, "")
+	msg.Text = "待验证者：" + "[" + getSurfaceName(newMember) + "](tg://user?id=" + strconv.Itoa(int(newMember.ID)) + ")"
+	msg.Text += "\n\n请在120秒内完成验证，否则永久不能入群！\n\n"
+	msg.Text += "请计算下面一道数学题\n\n" + txt + "\n\n"
+	msg.ParseMode = "MarkdownV2"
 	msg.ReplyMarkup = markup
+	//sendTxtMsg(chatID, "@"+getUserName(newMember)+"\n")
+	//sendMarkDownMsg(chatID,)
 	sentMsg, err := bot.Send(msg)
 	if err != nil {
 		log.Println(err)

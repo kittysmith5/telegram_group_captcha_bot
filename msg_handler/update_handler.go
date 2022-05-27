@@ -13,6 +13,7 @@ type VerifyType struct {
 }
 
 var verifyMap = map[string]VerifyType{}
+
 var counterMap = map[int64]int8{}
 
 func updateMsgHandler(update *api.Update) {
@@ -44,16 +45,10 @@ func callbackQueryHandler(update *api.Update) {
 				delete(verifyMap, id)
 				sendAnswerCallBack(update.CallbackQuery.ID, "    恭喜，你通过了验证!")
 			} else if userIsRight && msgIsRight && cidISRight {
-				//txt := "@" + verifyType.newUser.UserName + "\n" + "对不起，回答错误，请在6个小时后重新加群！"
-				//delMsg(chatID, mid)
-				//sentMsg := sendTxtMsg(chatID, txt)
-				//time.Sleep(time.Second * 8)
-				//delMsg(chatID, sentMsg.MessageID)
 				sendAnswerCallBack(update.CallbackQuery.ID, "对不起，回答错误，请在6个小时后重新加群！")
 				kickMember(chatID, verifyType.newUser.ID, 3600*6)
 				delete(verifyMap, id)
-				time.Sleep(time.Second * 2)
-
+				time.Sleep(time.Second * 7)
 			} else if !userIsRight && cidISRight && !isAdmin(chatID, update.CallbackQuery.From.ID) {
 				wrongUserID := update.CallbackQuery.From.ID
 				counterMap[wrongUserID] += 1
@@ -78,13 +73,13 @@ func myChatMemberHandler(update *api.Update) {
 	newUser := update.MyChatMember.NewChatMember
 	newUserID := newUser.User.ID
 	if newUserID == bot.Self.ID {
-		if !canManageGrp(newUser) {
+		if !botCanManageGrp(newUser) {
 			cid := update.MyChatMember.Chat.ID
 			sentTxtMsg := sendTxtMsg(cid, "请给我删除消息权限，管理群权限，禁言删除群成员权限（管理员权限中设置）！才能进行入群验证")
 			time.Sleep(time.Second * 30)
 			delMsg(cid, sentTxtMsg.MessageID)
 		}
-		if !canSendMsg(newUser) && !update.MyChatMember.From.IsBot {
+		if !botCanSendMsg(newUser) && !update.MyChatMember.From.IsBot {
 			//priChatID :=
 			userID := update.MyChatMember.From.ID
 			atUser := "@" + getUserName(update.MyChatMember.From)
