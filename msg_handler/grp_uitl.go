@@ -141,8 +141,8 @@ func delMsg(chatID int64, msgID int) {
 }
 
 func isCreator(chatID, userID int64) bool {
-	println("======================")
-	println(userID)
+	//println("======================")
+	//println(userID)
 	chatConf := api.ChatConfig{
 		ChatID:             chatID,
 		SuperGroupUsername: "",

@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -60,9 +61,13 @@ func sendCaptcha(update *api.Update, newMember api.User) (res string, sentMsg ap
 	markup := api.NewInlineKeyboardMarkup(rows)
 
 	msg := api.NewMessage(chatID, "")
-	msg.Text = "待验证者：" + "[" + getSurfaceName(newMember) + "](tg://user?id=" + strconv.Itoa(int(newMember.ID)) + ")"
+	msg.Text = "@" + getUserName(newMember) + "\n\n\n"
+	msg.Text += "待验证者：" + "[" + getSurfaceName(newMember) + "](tg://user?id=" + strconv.Itoa(int(newMember.ID)) + ")"
+	//println(getUserName(newMember))
 	msg.Text += "\n\n请在120秒内完成验证，否则永久不能入群！\n\n"
-	msg.Text += "请计算下面一道数学题\n\n" + txt + "\n\n"
+	msg.Text += "请计算下面一道数学题\n\n\n\n" + txt + "\n\n"
+	// __ is markdown char, so it needs to escape with `\_`
+	msg.Text = strings.Replace(msg.Text, "_", `\_`, -1)
 	msg.ParseMode = "MarkdownV2"
 	msg.ReplyMarkup = markup
 	//sendTxtMsg(chatID, "@"+getUserName(newMember)+"\n")
