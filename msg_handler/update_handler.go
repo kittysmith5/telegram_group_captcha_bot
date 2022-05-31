@@ -75,7 +75,8 @@ func myChatMemberHandler(update *api.Update) {
 	if newUserID == bot.Self.ID {
 		if !botCanManageGrp(newUser) {
 			cid := update.MyChatMember.Chat.ID
-			sentTxtMsg := sendTxtMsg(cid, "请给我删除消息权限，管理群权限，禁言删除群成员权限（管理员权限中设置）！才能进行入群验证")
+			sentTxtMsg := sendTxtMsg(cid,
+				"请给我删除消息权限，管理群权限，禁言删除群成员权限（管理员权限中设置）！才能进行入群验证")
 			time.Sleep(time.Second * 30)
 			delMsg(cid, sentTxtMsg.MessageID)
 		}
@@ -87,7 +88,8 @@ func myChatMemberHandler(update *api.Update) {
 			grpName := update.MyChatMember.Chat.UserName
 			grpLink := "[" + grpTitle + "](t.me/" + grpName + ")"
 
-			sentMDMsg := sendMarkDownMsg(userID, atUser+"\n请给我\t"+grpLink+"\t群\n发送消息权限（机器人权限设置）")
+			sentMDMsg := sendMarkDownMsg(userID,
+				atUser+"\n请给我\t"+grpLink+"\t群\n发送消息权限（机器人权限设置）")
 			time.Sleep(time.Second * 300)
 			delMsg(userID, sentMDMsg.MessageID)
 		}

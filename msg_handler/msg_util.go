@@ -27,7 +27,7 @@ func sendMarkDownMsg(cid int64, txt string) (sentMsg api.Message) {
 	return
 }
 
-func sendCapture(update *api.Update, newMember api.User) (res string, sentMsg api.Message) {
+func sendCaptcha(update *api.Update, newMember api.User) (res string, sentMsg api.Message) {
 	plusSticker := "\u2795"
 	chatID := update.Message.Chat.ID
 	//newMembers := *update.Message.NewChatMembers

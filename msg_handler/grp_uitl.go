@@ -96,7 +96,7 @@ func newMembersIntoGrp(update *api.Update) {
 	}
 	if member.IsBot && !isCreator(cid, fid) || !member.IsBot && !isAdmin(cid, fid) {
 		banMember(cid, member.ID, -1)
-		res, sentMsg := sendCapture(update, member)
+		res, sentMsg := sendCaptcha(update, member)
 		verifyMap[util.NewUUIDStr()] = VerifyType{
 			newUser: member,
 			res:     res,

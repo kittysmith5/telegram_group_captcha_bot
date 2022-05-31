@@ -1,10 +1,9 @@
 package msg_handler
 
 import (
+	api "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
-
-import api "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 var bot *api.BotAPI
 
@@ -16,7 +15,6 @@ func botApi(botToken string) *api.BotAPI {
 	//botEntity.Debug = true
 	//bot.Self == getMe()
 	log.Printf("Authorized on account %s\t Id: %d", botEntity.Self.UserName, botEntity.Self.ID)
-
 	return botEntity
 }
 
