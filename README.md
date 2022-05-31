@@ -1,4 +1,4 @@
-# Group verification robot
+# telegram group captcha bot
 
 ## How to use
 ```shell
