@@ -3,9 +3,9 @@
 ## How to use
 ```shell
 
-git clone https://github.com/kittysmith5/grp_verification_bot_v5.git
+git clone https://github.com/kittysmith5/telegram_group_captcha_bot
 
-cd grp_verification_bot_v5
+cd telegram_group_captcha_bot
 
 go build -o bot .
 
