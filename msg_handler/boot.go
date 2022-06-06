@@ -12,7 +12,7 @@ func botApi(botToken string) *api.BotAPI {
 	if err != nil {
 		log.Panic("It can't get the connection with bot")
 	}
-	botEntity.Debug = true
+	//botEntity.Debug = true
 	//bot.Self == getMe()
 	log.Printf("Authorized on account %s\t Id: %d", botEntity.Self.UserName, botEntity.Self.ID)
 	return botEntity
