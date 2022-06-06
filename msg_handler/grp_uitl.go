@@ -184,15 +184,15 @@ func isAdmin(chatID, userID int64) bool {
 }
 
 /*func unbanMember(chatID, userID int64) {
-    memberConf := api.ChatMemberConfig{
-        ChatID:             chatID,
-        SuperGroupUsername: "",
-        ChannelUsername:    "",
-        UserID:             userID,
-    }
-    unbanConf := api.UnbanChatMemberConfig{
-        ChatMemberConfig: memberConf,
-        OnlyIfBanned:     false,
-    }
-    _, _ = bot.Send(unbanConf)
+   memberConf := api.ChatMemberConfig{
+       ChatID:             chatID,
+       SuperGroupUsername: "",
+       ChannelUsername:    "",
+       UserID:             userID,
+   }
+   unbanConf := api.UnbanChatMemberConfig{
+       ChatMemberConfig: memberConf,
+       OnlyIfBanned:     false,
+   }
+   _, _ = bot.Send(unbanConf)
 }*/
