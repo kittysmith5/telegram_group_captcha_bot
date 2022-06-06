@@ -46,9 +46,14 @@ func callbackQueryHandler(update *api.Update) {
 				sendAnswerCallBack(update.CallbackQuery.ID, "    恭喜，你通过了验证!")
 			} else if userIsRight && msgIsRight && cidISRight {
 				sendAnswerCallBack(update.CallbackQuery.ID, "对不起，回答错误，请在6个小时后重新加群！")
+				delMsg(chatID, verifyType.mid)
+				tipMsg := getUserName(verifyType.newUser) +
+					"\n对不起，回答错误，请在6个小时后重新加群！如果机器人误操作，请联系群管理员！"
+				answerTipMsg := sendMarkDownMsg(chatID, tipMsg)
+				time.Sleep(time.Second * 30)
 				kickMember(chatID, verifyType.newUser.ID, 3600*6)
 				delete(verifyMap, id)
-				time.Sleep(time.Second * 7)
+				delMsg(chatID, answerTipMsg.MessageID)
 			} else if !userIsRight && cidISRight && !isAdmin(chatID, update.CallbackQuery.From.ID) {
 				wrongUserID := update.CallbackQuery.From.ID
 				counterMap[wrongUserID] += 1
@@ -56,8 +61,8 @@ func callbackQueryHandler(update *api.Update) {
 				for userID, counter := range counterMap {
 					if counter == 3 {
 						banMember(chatID, userID, 900)
-						name := getUserName(*update.CallbackQuery.From)
-						txt := "@" + name + "\n" + "\n乱点他人验证消息三次，禁言15分钟！"
+						atName := getUserName(*update.CallbackQuery.From)
+						txt := atName + "\n" + "\n乱点他人验证消息三次，禁言15分钟！"
 						sentMsg := sendMarkDownMsg(chatID, txt)
 						counterMap[userID] = 0
 						time.Sleep(time.Second * 10)
@@ -83,7 +88,7 @@ func myChatMemberHandler(update *api.Update) {
 		if !botCanSendMsg(newUser) && !update.MyChatMember.From.IsBot {
 			//priChatID :=
 			userID := update.MyChatMember.From.ID
-			atUser := "@" + getUserName(update.MyChatMember.From)
+			atUser := getUserName(update.MyChatMember.From)
 			grpTitle := update.MyChatMember.Chat.Title
 			grpName := update.MyChatMember.Chat.UserName
 			grpLink := "[" + grpTitle + "](t.me/" + grpName + ")"

@@ -61,7 +61,7 @@ func sendCaptcha(update *api.Update, newMember api.User) (res string, sentMsg ap
 	markup := api.NewInlineKeyboardMarkup(rows)
 
 	msg := api.NewMessage(chatID, "")
-	msg.Text = "@" + getUserName(newMember) + "\n\n\n"
+	msg.Text = getUserName(newMember) + "\n\n\n"
 	msg.Text += "待验证者：" + "[" + getSurfaceName(newMember) + "](tg://user?id=" + strconv.Itoa(int(newMember.ID)) + ")"
 	//println(getUserName(newMember))
 	msg.Text += "\n\n请在120秒内完成验证，否则永久不能入群！\n\n"

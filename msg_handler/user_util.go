@@ -17,8 +17,8 @@ func getSurfaceName(user api.User) (fullName string) {
 
 func getUserName(user api.User) string {
 	if user.UserName != "" {
-		return user.UserName
+		return "@" + user.UserName
 	} else {
-		return getSurfaceName(user)
+		return "[用户" + strconv.Itoa(int(user.ID)) + "](tg://user?id=" + strconv.Itoa(int(user.ID)) + ")"
 	}
 }
