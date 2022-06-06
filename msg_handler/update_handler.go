@@ -56,7 +56,7 @@ func callbackQueryHandler(update *api.Update) {
 				delete(verifyMap, id)
 				delMsg(chatID, answerTipMsg.MessageID)
 				return
-			} else if !userIsRight && cidISRight && !isAdmin(chatID, update.CallbackQuery.From.ID) {
+			} else if !userIsRight && cidISRight {
 				wrongUserID := update.CallbackQuery.From.ID
 				counterMap[wrongUserID] += 1
 				sendAnswerCallBack(update.CallbackQuery.ID, "不要乱点他人验证消息, 多次点击将会禁言!")
