@@ -32,7 +32,6 @@ func Boot(botToken string) {
 		//    begin = false
 		//    continue
 		//}
-		print(update.UpdateID)
 		go updateHandler(&update)
 	}
 }

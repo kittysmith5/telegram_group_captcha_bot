@@ -14,7 +14,7 @@ type VerifyType struct {
 
 var verifyMap = map[string]VerifyType{}
 
-var counterMap = map[int64]int8{}
+//var counterMap = map[int64]int8{}
 
 func updateMsgHandler(update *api.Update) {
 	if isGrp(update) && update.Message != nil {
@@ -31,10 +31,19 @@ func updateMsgHandler(update *api.Update) {
 
 func callbackQueryHandler(update *api.Update) {
 	chatID := update.CallbackQuery.Message.Chat.ID
-	if isGrp(update) && isAdmin(chatID, bot.Self.ID) {
+	// other can not click the button, because isAdmin can not request frequently!!!
+	userIsRight := false
+	for _, verifyType := range verifyMap {
+		userIsRight = verifyType.newUser.ID == update.CallbackQuery.From.ID
+		if userIsRight {
+			break
+		}
+	}
+
+	if isGrp(update) && userIsRight && isAdmin(chatID, bot.Self.ID) {
 		mid := update.CallbackQuery.Message.MessageID
 		for id, verifyType := range verifyMap {
-			userIsRight := verifyType.newUser.ID == update.CallbackQuery.From.ID
+			//userIsRight := verifyType.newUser.ID == update.CallbackQuery.From.ID
 			resIsRight := verifyType.res == update.CallbackQuery.Data
 			msgIsRight := verifyType.mid == mid
 			cidISRight := verifyType.gid == chatID
@@ -56,21 +65,6 @@ func callbackQueryHandler(update *api.Update) {
 				delete(verifyMap, id)
 				delMsg(chatID, answerTipMsg.MessageID)
 				return
-			} else if !userIsRight && cidISRight {
-				wrongUserID := update.CallbackQuery.From.ID
-				counterMap[wrongUserID] += 1
-				sendAnswerCallBack(update.CallbackQuery.ID, "不要乱点他人验证消息, 多次点击将会禁言!")
-				for userID, counter := range counterMap {
-					if counter == 3 {
-						banMember(chatID, userID, 900)
-						atName := getUserName(*update.CallbackQuery.From)
-						txt := atName + "\n" + "\n乱点他人验证消息三次，禁言15分钟！"
-						sentMsg := sendMarkDownMsg(chatID, txt)
-						counterMap[userID] = 0
-						time.Sleep(time.Second * 10)
-						delMsg(chatID, sentMsg.MessageID)
-					}
-				}
 			}
 		}
 	}
