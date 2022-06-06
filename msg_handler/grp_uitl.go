@@ -97,7 +97,8 @@ func newMembersIntoGrp(update *api.Update) {
 	if member.IsBot && !isCreator(cid, fid) || !member.IsBot && !isAdmin(cid, fid) {
 		banMember(cid, member.ID, -1)
 		res, sentMsg := sendCaptcha(update, member)
-		verifyMap[util.NewUUIDStr()] = VerifyType{
+		newUUID := util.NewUUIDStr()
+		verifyMap[newUUID] = VerifyType{
 			newUser: member,
 			res:     res,
 			gid:     cid,
@@ -105,9 +106,11 @@ func newMembersIntoGrp(update *api.Update) {
 		}
 		time.Sleep(time.Second * 95)
 		for id, verifyUser := range verifyMap {
-			delMsg(cid, verifyUser.mid)
-			kickMember(cid, verifyUser.newUser.ID, -1)
-			delete(verifyMap, id)
+			if id == newUUID {
+				delMsg(cid, verifyUser.mid)
+				kickMember(cid, verifyUser.newUser.ID, -1)
+				delete(verifyMap, id)
+			}
 		}
 	}
 }

@@ -44,6 +44,7 @@ func callbackQueryHandler(update *api.Update) {
 				unRestrictMember(chatID, verifyType.newUser.ID)
 				delete(verifyMap, id)
 				sendAnswerCallBack(update.CallbackQuery.ID, "    恭喜，你通过了验证!")
+				return
 			} else if userIsRight && msgIsRight && cidISRight {
 				sendAnswerCallBack(update.CallbackQuery.ID, "对不起，回答错误，请在6个小时后重新加群！")
 				delMsg(chatID, verifyType.mid)
@@ -54,6 +55,7 @@ func callbackQueryHandler(update *api.Update) {
 				kickMember(chatID, verifyType.newUser.ID, 3600*6)
 				delete(verifyMap, id)
 				delMsg(chatID, answerTipMsg.MessageID)
+				return
 			} else if !userIsRight && cidISRight && !isAdmin(chatID, update.CallbackQuery.From.ID) {
 				wrongUserID := update.CallbackQuery.From.ID
 				counterMap[wrongUserID] += 1
