@@ -10,10 +10,7 @@ import (
 )
 
 func wrapUserLink(user api.User) (msgTxt string) {
-	//msg.Text += "待验证者：" + "[" + getSurfaceName(newMember) + "]" +
-	//	"(tg://user?id=" + strconv.Itoa(int(newMember.ID)) + ")"
 	fullName := getSurfaceName(user)
-	//userName := getUserName(user)
 	msgTxt = "[" + fullName + "]" + "(tg://user?id=" + strconv.Itoa(int(user.ID)) + ")"
 	return
 }
@@ -71,8 +68,7 @@ func sendCaptcha(update *api.Update, newMember api.User) (res string, sentMsg ap
 
 	msg := api.NewMessage(chatID, "")
 	msg.Text = getUserName(newMember) + "\n\n\n"
-	msg.Text += "待验证者：" + "[" + getSurfaceName(newMember) + "]" +
-		"(tg://user?id=" + strconv.Itoa(int(newMember.ID)) + ")"
+	msg.Text += "待验证者：" + wrapUserLink(newMember)
 	//println(getUserName(newMember))
 	msg.Text += "\n\n请在120秒内完成验证，否则永久不能入群！\n\n" +
 		"请计算下面一道数学题\n\n\n\n" + txt + "\n\n"
