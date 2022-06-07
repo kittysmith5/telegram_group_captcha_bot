@@ -14,8 +14,6 @@ type VerifyType struct {
 
 var verifyMap = map[string]VerifyType{}
 
-//var counterMap = map[int64]int8{}
-
 func updateMsgHandler(update *api.Update) {
 	if isGrp(update) && update.Message != nil {
 		upMsg := update.Message
@@ -72,38 +70,6 @@ func callbackQueryHandler(update *api.Update) {
 			delMsg(chatID, answerTipMsg.MessageID)
 			return
 		}
-
-		//for id, verifyType := range verifyMap {
-		//    //userIsRight := verifyType.newUser.ID == update.CallbackQuery.From.ID
-		//    resIsRight := verifyType.res == update.CallbackQuery.Data
-		//    if userIsRight && resIsRight && msgIsRight && cidIsRight {
-		//        delMsg(chatID, mid)
-		//        unRestrictMember(chatID, verifyType.newUser.ID)
-		//        delete(verifyMap, id)
-		//        sendAnswerCallBack(update.CallbackQuery.ID, "    恭喜，你通过了验证!")
-		//        return
-		//    } else if userIsRight && msgIsRight && cidIsRight {
-		//        sendAnswerCallBack(update.CallbackQuery.ID, "对不起，回答错误，请在6个小时后重新加群！")
-		//        delMsg(chatID, verifyType.mid)
-		//        tipMsg := getUserName(verifyType.newUser) +
-		//            "\n对不起，回答错误，请在6个小时后重新加群！如果机器人误操作，请联系群管理员！"
-		//        answerTipMsg := sendMarkDownMsg(chatID, tipMsg)
-		//        time.Sleep(time.Second * 30)
-		//        kickMember(chatID, verifyType.newUser.ID, 3600*6)
-		//        delete(verifyMap, id)
-		//        delMsg(chatID, answerTipMsg.MessageID)
-		//        return
-		//    } else if !userIsRight && cidIsRight {
-		//        sendAnswerCallBack(update.CallbackQuery.ID,
-		//            "这并不是你的验证，请选择你的验证消息进行验证！\n多次乱点将直接踢出该群")
-		//        counterMap[userID]++
-		//        if counterMap[userID] >= 5 {
-		//            kickMember(chatID, userID, -1)
-		//            delUserItemByUserID(userID)
-		//            sendMarkDownMsg(chatID, wrapUserLink(*update.CallbackQuery.From)+"多次乱点他人验证，已被剔除群！")
-		//        }
-		//    }
-		//}
 	}
 }
 
