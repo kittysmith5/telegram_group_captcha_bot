@@ -12,4 +12,5 @@ func main() {
 	flag.Parse()
 	fmt.Println("YOUR TOKEN IS: " + *token)
 	msg_handler.Boot(*token)
+
 }
