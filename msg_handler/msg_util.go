@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+func wrapUserLink(user api.User) (msgTxt string) {
+	//msg.Text += "待验证者：" + "[" + getSurfaceName(newMember) + "]" +
+	//	"(tg://user?id=" + strconv.Itoa(int(newMember.ID)) + ")"
+	fullName := getSurfaceName(user)
+	//userName := getUserName(user)
+	msgTxt = "[" + fullName + "]" + "(tg://user?id=" + strconv.Itoa(int(user.ID)) + ")"
+	return
+}
+
 func sendTxtMsg(cid int64, txt string) (sentMsg api.Message) {
 	msg := api.NewMessage(cid, txt)
 	sentMsg, err := bot.Send(msg)
